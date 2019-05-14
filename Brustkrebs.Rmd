@@ -1,0 +1,145 @@
+---
+title: "Brustkrebs - Thema Vorsorgeuntersuchung für Frauen unter 40"
+author: "Christian Schitton"
+date: "11 May 2019"
+output: html_document
+---
+
+## Brustkrebsrisiko
+
+Brustkrebs ist eine der häufigsten Krebserkrankungen bei Frauen. Jährlich gibt es ca. 5,000 Neuerkrankungen in Österreich. Einzelheiten zum Brustkrebsrisiko gibt es [hier](https://www.netdoktor.at/krankheit/krebsschule/frueher-brustkrebs-6955987) oder auch [hier](https://www.statistik.at/web_de/statistiken/menschen_und_gesellschaft/gesundheit/krebserkrankungen/brust/021696.html). Europaweit beginnen die Brustkrebsvorsorgeuntersuchungen generell ab einem Alter von 50 Jahren. In Österreich beginnen, ohne spezielle Verdachtsmomente, reguläre Vorsorgeuntersuchungen bereits ab 45 Jahren, teilweise auch schon ab dem 40. Lebensjahr. Eine detaillierte Übersicht über das Vorsorgeprozedere gibt unter anderem die [NoeGKK](https://www.noegkk.at/cdscontent/?contentid=10007.701816&viewmode=content).
+
+Warum starten Vorsorgeuntersuchungen in einem so späten Lebensalter, wenn Brustkrebs ein derart hohes Risiko darstellt? Und selbst der in Österreich praktizierte frühere Start von regulären Untersuchungen mit 40 bzw. 45 Jahren ist nicht unumstritten, wie [dieser Artikel](https://derstandard.at/2000018064786/Oesterreichs-fragwuerdige-Brustkrebsfrueherkennung) zeigt.
+
+
+## Risiko für Frauen unter 40
+
+Die Tücke liegt im Detail. Von den ca. 5,000 Neuerkrankungen pro Jahr entfallen 7% auf Frauen unter 40 Jahren. Somit kommen auf ungefähr 1.9 Mio Frauen unter 40 Lebensjahren in Österreich ca. 350 Neuerkrankungen. Die **Primärwahrscheinlichkeit (Prior)** als Frau unter 40 Jahren **an Krebs zu erkranken**, ist somit **0.019%**.
+
+Sollte es dennoch passieren, im Rahmen einer Vorsorgeuntersuchung positiv auf Brustkrebs getestet worden zu sein, ist die Wahrscheinlichkeit, auch wirklich Brustkrebs zu haben, immer noch bei geringen **1.85%**. Wie kann das sein? Nun, wie bereits angesprochen, die Tücke liegt in den Details und die heissen
+
+* Primärwahrscheinlichkeit (Prior), d.h. die Wahrscheinlichkeit, überhaupt an Brustkrebs zu erkranken und
+* Testgenauigkeit der Vorsorgeuntersuchung (in diesem Fall Mammografie).
+
+Die Primärwahrscheinlichekt wissen wir. Die ist für Frauen unter 40 Jahren ca. 0.019%. Weiters gehen wir davon aus, daß die Vorsorgeuntersuchung in 99% der Fälle ein richtiges Testergebnis abliefert (Testgenauigkeit = 99%). Somit haben wir folgende Rahmenbedingungen:
+
+> P(Prior) = 0.019%; entspricht Wahrnscheinlichkeit, daß Frau unter 40 Jahren Brustkrebs bekommt.  
+>
+> 1 - P(Prior) = 99.981%; entspricht Wahrscheinlichkeit, daß Frau unter 40 Jahren keinen Brustkrebs bekommt.  
+>
+> P(positiv getested/ Frau hat Krebs) = 99%; vorausgesetzt die betroffene Frau hat Krebs, wird das in 99% der Fälle durch die Untersuchung auch angezeigt  
+>
+> P(positiv getestet/ Frau hat keinen Krebs) = 1%; Untersuchung zeigt in 1% der Fälle ein positives Ergebnis, obwohl die betroffene Frau keinen Brustkrebs hat. Das wird auch _"False Positive"_ genannt.
+
+Aus diesen verfügbaren Daten lässt sich die Frage ableiten: **Wie hoch ist die Wahrscheinlichkeit, daß eine betroffene Frau unter 40 Jahren, die positiv auf Brustkrebs getestet wurde, auch wirklich Brustkrebs hat?**
+
+> P(Frau hat Krebs/ positiv getestet) = ?
+
+Um das herauszufinden, folgende Rechnung:
+
+> P(Frau hat Krebs/ positiv getestet) =
+>
+> P(positiv getestet/ Frau hat Krebs) * P(Prior) /  
+> (P(positiv getestet/ Frau hat Krebs) * P(Prior) + P(positiv getestet/ Frau hat keinen Krebs) * (1 - P(Prior))) =
+>
+> = (0.99 * 0.00019) / (0.99 * 0.00019 + 0.01 * 0.99981) = 0.0185 oder **1.85%**
+
+
+## Das Problem sind die Nebeneffekte
+
+Das Problem sind jene Frauen, die trotz hoher Testgenauigkeit der Vorsorgeuntersuchung (wir haben 99% angenommen) positiv getestet werden, obwohl sie keinen Krebs haben. Im Statistikerjargon heissen diese 'Nebeneffekte' _False Positive_. Abgesehen vom emotionalen Stress müssen sich die Betroffenen zusätzlichen Untersuchungen stellen oder werden einer Therapie unterzogen, obwohl diese eigentlich gesund sind. Und wie man aus folgendem Beispiel sehen kann, wäre die **Zahl der falsch diagnostizierten Frauen** im Alter von unter 40 Jahren **gar nicht so klein**.
+
+Hier nochmals die Rahmenbedingungen in Österreich für Frauen unter 40 Jahren wie oben dargestellt: 
+
+```{r}
+female_AT <- 9000000 * 0.52         # Anzahl Frauen in Österreich
+female_AT_40 <- female_AT * 0.40    # Anzahl Frauen unter 40 Jahren
+female_AT_40  
+
+krank_neu <- 5000                   # Anzahl Brustkrebsneuerkrankungen in Österreich pro Jahr
+krank_neu_40 <- krank_neu * 0.07    # Anzahl Brustkrebsneuerkrankungen bei Frauen
+                                    # unter 40 Jahren
+krank_neu_40
+
+prior_krank_40 <- krank_neu_40 / female_AT_40  # Primärwahrscheinlichkeit Brustkrebs bei Frauen
+                                               # unter 40 Jahren (Angaben in Prozent)
+round(prior_krank_40 * 100, 3)
+```
+
+Nehmen wir eine Gruppe von 250,000 Frauen unter 40 Jahren. Auf Basis der Primärwahrscheinlichkeit für Frauen in diesem Alter ist diese Gruppe in kranke sowie gesunde Frauen zu unterteilen:
+
+```{r}
+N <- 250000                          # Anzahl getestete Frauen unter 40
+
+ergebnis <- sample(c("Krank", "Gesund"), N, replace = TRUE,
+                   prob = c(prior_krank_40, 1 - prior_krank_40))
+```
+
+Es ergibt sich folgende Anzahl kranker Frauen:
+
+```{r}
+N_K <- sum(ergebnis == "Krank")      # Anzahl kranker Frauen
+N_K
+```
+
+Und folgende Anzahl gesunder Frauen:
+
+```{r}
+N_G <- sum(ergebnis == "Gesund")     # Anzahl gesunder Frauen
+N_G                                  
+```
+
+Diese Verteilung ergibt sich, setzen wir die Primärwahrscheinlichkeit voraus. Jetzt müssen die Frauen aber noch getestet werden, womit auch die Testgenauigkeit der Vorsorgeuntersuchung eine Rolle zu spielen beginnt. Statistisch ist dieser Test wie folgt zu sehen:
+
+```{r}
+test_genau <- 0.99                   # Testgenauigkeit Vorsorgeuntersuchung
+
+test <- vector("numeric", N)
+
+test[ergebnis == "Krank"] <- sample(c(1, 0), N_K, replace = TRUE,
+                                      prob = c(test_genau, 1 - test_genau))
+positive_positive <- sum(test[ergebnis == "Krank"])
+
+test[ergebnis == "Gesund"] <- sample(c(0, 1), N_G, replace = TRUE,
+                                      prob = c(test_genau, 1 - test_genau))
+false_positive <- sum(test[ergebnis == "Gesund"])
+```
+
+Die Vorsorgeuntersuchung kommt zu nachstehendem Ergebnis (Tabelle besteht aus 4 Feldern, nämlich Gesund/ 0 = negativ gestestet, Gesund/ 1 = positiv getestet, Krank/ 0 = negativ getestet, Krank/ 1 = positiv getestet):
+
+```{r}
+table(ergebnis, test)
+```
+
+Ziel der Vorsorgeuntersuchung ist es, jene Frauen, die auch wirklich krank sind, positiv zu testen (Zelle Krank/ 1) und damit rechtzeitig mit einer Therapie beginnen zu können. Aus oben genannten Gründen sind jene Resultate im Sinne des Vorsorgeziels unerwünscht, bei denen die betroffenen Frauen zwar gesund sind und dennoch positiv getestet wurden (Zelle Gesund/ 1).
+
+
+## Schlussfolgerung
+
+Wie sich aus der obigen Tabelle unschwer erkennen lässt, werden **trotz hoher Testgenauigkeit** nominal relativ **viele Frauen**, die an sich **gesund** sind, **positiv auf Brustkrebs getestet**. Die Streuung der Vorsorgeuntersuchung ist trotz hoher Testgenauigkeit in diesem Alterssegment zu hoch und führt zu einer hohen Anzahl unrichtiger Ergebnisse.
+
+Demgegenüber ist die Wahrscheinlichkeit, an Krebs erkrankt zu sein, soferne man positiv getestet wurde, nach wie vor sehr gering (das unten dargestellte Ergebnis aus dem Testlauf ist hierbei nicht immer exakt bei 1.85% wie oben berechnet, da es sich um Wahrscheinlichkeitsdurchläufe handelt mit leicht oszillierenden Ergebnissen).
+
+``` {r}
+posterior_krank <- positive_positive / (positive_positive + false_positive)
+                                      # Wahrscheinlichkeit, an Krebs erkrankt zu sein,
+                                      # soferne Vorsorgeuntersuchung positiven Test ergab
+                                      # (Angaben in Prozent)
+round(posterior_krank * 100, 2)
+```
+
+Erschwerend kommt hinzu, dass diverse medizinische Umstände die Testgenauigkeit weiter reduzieren (so ist etwa die Gewebedichte bei jüngeren Frauen im Brustbereich höher und beeinflusst ungünstig die Testergebnisse) und die Annahme einer Testgenauigkeit von 99% auch nicht gehalten werden kann. Somit würde sich die ohnehin schon hohe Anzahl falsch getesteter Frauen nochmals erhöhen.
+
+Anders sieht die Sache bei **Frauen über 50 Jahren** aus. Von den ca. 5,000 Neuerkrankungen sind zu drei Viertel Frauen dieser Altersgruppe betroffen. Die Wahrscheinlichkeit Brustkrebs zu haben, soferne man in der Vorsorgeuntersuchung positiv auf Brustkrebs getestet wurde, wäre demnach auch schon **bei deutlichen 94%**. Die Streuung der Vorsorgeuntersuchung ist hier wesentlich geringer und die Tests sind im Sinne der Patientinnen zielgenauer.
+
+**Insgesamt scheint also die derzeit gängige Praxis einer regulären Vorsorgeuntersuchung ab 50 bzw. 45 Jahren in Österreich Sinn zu machen.** Übrigens ergeben sich ähnliche Relationen bei Männern im Bereich Prostatakrebs. 
+
+
+
+
+
+
+
+
+
+
